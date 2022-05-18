@@ -20,7 +20,7 @@ echo -e "Installing jq while EC cluster creates"
 sudo apt-get install jq
 
 echo -e "Getting EC cluster config endpoint"
-CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
+CONFIG_ENDPOINT=$(y | aws elasticache describe-cache-clusters \
     --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
     --show-cache-node-info | grep jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
