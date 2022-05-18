@@ -28,7 +28,7 @@ echo -e "Saving EC cluster config endpoint"
 KEYSTORE_PATH="${LOGICAL_NAME}/ECConfigurationEndpoint"
 JSON_PARAMS='{'
 JSON_PARAMS+='"Name": "'${KEYSTORE_PATH}'",'
-JSON_PARAMS+='"Value": "'${CONFIG_ENDPOINT}'",'
+JSON_PARAMS+='"Value": '${CONFIG_ENDPOINT}','
 JSON_PARAMS+='"Type": "String",'
 JSON_PARAMS+='"Overwrite": true'
 JSON_PARAMS+='}'
