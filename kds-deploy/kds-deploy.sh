@@ -22,7 +22,7 @@ echo "Y" | sudo apt-get install jq
 echo -e "Getting EC cluster config endpoint"
 CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
     --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
-    --show-cache-node-info | grep jq '.CacheClusters[0].ConfigurationEndpoint.Address')
+    --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
 echo -e "Saving EC cluster config endpoint"
 KEYSTORE_PATH="${LOGICAL_NAME}/ECConfigurationEndpoint"
