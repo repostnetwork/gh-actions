@@ -13,10 +13,12 @@ docker build -t $LOGICAL_NAME --build-arg ENV=$ENV --build-arg TYPE=$TYPE . || e
 echo -e "Creating KDS stream"
 aws kinesis create-stream --stream-name $LOGICAL_NAME --shard-count 4 || true
 
+NEW_CLUSTER="1"
 echo -e "Creating EC cluster"
-aws elasticache create-cache-cluster --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" --engine memcached --cache-node-type cache.m5.large --num-cache-nodes 1 && NEW_CLUSTER="1" || true && NEW_CLUSTER="0"
+aws elasticache create-cache-cluster --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" --engine memcached --cache-node-type cache.m5.large --num-cache-nodes || true && NEW_CLUSTER="0"
 
-if [ "$NEW_CLUSTER" -eq "1" ]; then #TODO
+echo $NEW_CLUSTER #TODO dd
+#if [ "$NEW_CLUSTER" -eq "1" ]; then #TODO flip, uncomment
   echo -e "Installing jq"
   echo "Y" | sudo apt-get install jq
 
@@ -25,8 +27,8 @@ if [ "$NEW_CLUSTER" -eq "1" ]; then #TODO
       --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
       --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
-  echo "config endpoint:" #TODO
-  echo "$CONFIG_ENDPOINT" #TODO
+  echo "config endpoint:" #TODO dd
+  echo "$CONFIG_ENDPOINT" #TODO dd
 
   echo -e "Saving EC cluster config endpoint"
   KEYSTORE_PATH="/${LOGICAL_NAME}/ECConfigurationEndpoint"
@@ -38,5 +40,5 @@ if [ "$NEW_CLUSTER" -eq "1" ]; then #TODO
   JSON_PARAMS+='}'
   aws ssm put-parameter \
        --cli-input-json "${JSON_PARAMS}"
-fi
+#fi #todo uncomment
 
