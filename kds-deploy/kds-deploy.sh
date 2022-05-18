@@ -20,14 +20,14 @@ echo -e "Installing jq while EC cluster creates"
 sudo apt-get install jq
 
 echo -e "Getting EC cluster config endpoint"
-CONFIG_ENDPOINT= aws elasticache describe-cache-clusters \
+CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
     --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
-    --show-cache-node-info | grep jq '.CacheClusters[0].ConfigurationEndpoint.Address'
+    --show-cache-node-info | grep jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
 echo -e "Saving EC cluster config endpoint"
-PATH="${LOGICAL_NAME}/ECConfigurationEndpoint"
+KEYSTORE_PATH="${LOGICAL_NAME}/ECConfigurationEndpoint"
 JSON_PARAMS='{'
-JSON_PARAMS+='"Name": "'${PATH}'",'
+JSON_PARAMS+='"Name": "'${KEYSTORE_PATH}'",'
 JSON_PARAMS+='"Value": "'${CONFIG_ENDPOINT}'",'
 JSON_PARAMS+='"Type": "String",'
 JSON_PARAMS+='"Overwrite": true'
