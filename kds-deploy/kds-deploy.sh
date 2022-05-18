@@ -15,3 +15,22 @@ aws kinesis create-stream --stream-name $LOGICAL_NAME --shard-count 4 || true
 
 echo -e "Creating EC cluster"
 aws elasticache create-cache-cluster --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" --engine memcached --cache-node-type cache.m5.large --num-cache-nodes 1 || true
+
+echo -e "Installing jq while EC cluster creates"
+sudo apt-get install jq
+
+echo -e "Getting EC cluster config endpoint"
+CONFIG_ENDPOINT= aws elasticache describe-cache-clusters \
+    --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
+    --show-cache-node-info | grep jq '.CacheClusters[0].ConfigurationEndpoint.Address'
+
+echo -e "Saving EC cluster config endpoint"
+PATH="${LOGICAL_NAME}/ECConfigurationEndpoint"
+JSON_PARAMS='{'
+JSON_PARAMS+='"Name": "'${PATH}'",'
+JSON_PARAMS+='"Value": "'${CONFIG_ENDPOINT}'",'
+JSON_PARAMS+='"Type": "String",'
+JSON_PARAMS+='"Overwrite": true'
+JSON_PARAMS+='}'
+aws ssm put-parameter \
+     --cli-input-json "${JSON_PARAMS}"
