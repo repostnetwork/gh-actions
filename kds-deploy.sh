@@ -29,6 +29,15 @@ if [ "$NEW_CLUSTER" = true ]; then
       --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
       --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
+  while [ $SECONDS -lt $end ] && [ -z "$CONFIG_ENDPOINT" ]; do
+      echo "cluster not ready, retrying in 15s"
+      sleep 15
+      CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
+        --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
+        --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
+      :
+  done
+
   echo -e "Saving EC cluster config endpoint"
   KEYSTORE_PATH="/${LOGICAL_NAME}/ECConfigurationEndpoint"
   JSON_PARAMS='{'
