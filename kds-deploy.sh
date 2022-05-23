@@ -17,9 +17,12 @@ NEW_CLUSTER=true
 echo -e "Creating EC cluster"
 aws elasticache create-cache-cluster --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" --engine memcached --cache-node-type cache.m5.large --num-cache-nodes 1 || NEW_CLUSTER=false
 
-if [ "$NEW_CLUSTER" = false ]; then
+if [ "$NEW_CLUSTER" = true ]; then
   echo -e "Installing jq"
   echo "Y" | sudo apt-get install jq
+
+  echo -e "waiting for cluster to be available"
+  aws elasticache cache-cluster-available --cache-cluster-id "${LOGICAL_NAME}-kds-dedup"
 
   echo -e "Getting EC cluster config endpoint"
   CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
