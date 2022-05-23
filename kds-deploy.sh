@@ -17,7 +17,7 @@ NEW_CLUSTER=true
 echo -e "Creating EC cluster"
 aws elasticache create-cache-cluster --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" --engine memcached --cache-node-type cache.m5.large --num-cache-nodes 1 || NEW_CLUSTER=false
 
-if [ "$NEW_CLUSTER" = true ]; then
+if [ "$NEW_CLUSTER" = false ]; then
   echo -e "Installing jq"
   echo "Y" | sudo apt-get install jq
 
