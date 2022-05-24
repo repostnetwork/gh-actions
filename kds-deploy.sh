@@ -26,71 +26,13 @@ if [ "$NEW_CLUSTER" = true ]; then
       --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
       --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
-  echo "config endpoint:"
-  echo "$CONFIG_ENDPOINT"
-  echo "${CONFIG_ENDPOINT}"
-
-  if [ "$CONFIG_ENDPOINT" = "null" ]
-  then
-      echo "1"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ "${CONFIG_ENDPOINT}" = "null" ]
-  then
-      echo "1"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ ! "$CONFIG_ENDPOINT" ]
-  then
-      echo "2"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ ! "${CONFIG_ENDPOINT}" ]
-  then
-      echo "3"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ -z "${CONFIG_ENDPOINT}" ]
-  then
-      echo "4"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ -z "$CONFIG_ENDPOINT" ]
-  then
-      echo "5"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ -n "${CONFIG_ENDPOINT}" ]
-  then
-      echo "6"
-      unset $CONFIG_ENDPOINT
-  fi
-
-  if [ -n "$CONFIG_ENDPOINT" ]
-  then
-      echo "7"
-      unset $CONFIG_ENDPOINT
-  fi
-
   end=$((SECONDS+300))
-  while [[ $SECONDS -lt $end  &&  -z "${CONFIG_ENDPOINT}" ]]; do
+  while [[ $SECONDS -lt $end  && (-z "${CONFIG_ENDPOINT}" || "$CONFIG_ENDPOINT" = "null") ]]; do
       echo "cluster not provisioned, retrying in 15s"
       sleep 15
       CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
         --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
         --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
-
-        if [ "$CONFIG_ENDPOINT" = "null" ]
-        then
-            unset $CONFIG_ENDPOINT
-        fi
-
       :
   done
 
