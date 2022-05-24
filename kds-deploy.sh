@@ -26,8 +26,55 @@ if [ "$NEW_CLUSTER" = true ]; then
       --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
       --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
+  echo "config endpoint:"
+  echo "$CONFIG_ENDPOINT"
+  echo "${CONFIG_ENDPOINT}"
+
   if [ "$CONFIG_ENDPOINT" = "null" ]
   then
+      echo "1"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ "${CONFIG_ENDPOINT}" = "null" ]
+  then
+      echo "1"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ ! "$CONFIG_ENDPOINT" ]
+  then
+      echo "2"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ ! "${CONFIG_ENDPOINT}" ]
+  then
+      echo "3"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ -z "${CONFIG_ENDPOINT}" ]
+  then
+      echo "4"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ -z "$CONFIG_ENDPOINT" ]
+  then
+      echo "5"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ -n "${CONFIG_ENDPOINT}" ]
+  then
+      echo "6"
+      unset $CONFIG_ENDPOINT
+  fi
+
+  if [ -n "$CONFIG_ENDPOINT" ]
+  then
+      echo "7"
       unset $CONFIG_ENDPOINT
   fi
 
