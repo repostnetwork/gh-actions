@@ -27,7 +27,7 @@ if [ "$NEW_CLUSTER" = true ]; then
       --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
   end=$((SECONDS+300))
-  while [[ $SECONDS -lt $end  && (-z "${CONFIG_ENDPOINT}" || "$CONFIG_ENDPOINT" = "null") ]]; do
+  while [[ $SECONDS -lt $end  && (-z "${CONFIG_ENDPOINT}" || "${CONFIG_ENDPOINT}" = "null") ]]; do
       echo "cluster not provisioned, retrying in 15s"
       sleep 15
       CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
