@@ -26,16 +26,24 @@ if [ "$NEW_CLUSTER" = true ]; then
       --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
       --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
 
-  echo "endpoint:"
-  echo "$CONFIG_ENDPOINT"
+  if [ "$CONFIG_ENDPOINT" = "null" ]
+  then
+      unset $CONFIG_ENDPOINT
+  fi
 
   end=$((SECONDS+300))
   while [[ $SECONDS -lt $end  &&  -z "${CONFIG_ENDPOINT}" ]]; do
-      echo "cluster not ready, retrying in 15s"
+      echo "cluster not provisioned, retrying in 15s"
       sleep 15
       CONFIG_ENDPOINT=$(aws elasticache describe-cache-clusters \
         --cache-cluster-id "${LOGICAL_NAME}-kds-dedup" \
         --show-cache-node-info | jq '.CacheClusters[0].ConfigurationEndpoint.Address')
+
+        if [ "$CONFIG_ENDPOINT" = "null" ]
+        then
+            unset $CONFIG_ENDPOINT
+        fi
+
       :
   done
 
