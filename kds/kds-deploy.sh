@@ -6,12 +6,17 @@ then
       exit 1
 fi
 
+if [ -z "$SHARD_COUNT" ]
+then
+      echo "No shard count specified, using the default of 4"
+      SHARD_COUNT=4
+fi
 
 #echo -e "Building Docker..."
 #docker build -t $LOGICAL_NAME --build-arg ENV=$ENV --build-arg TYPE=$TYPE . || exit 1
 
 echo -e "Creating KDS stream"
-aws kinesis create-stream --stream-name $LOGICAL_NAME --shard-count 4 || true
+aws kinesis create-stream --stream-name $LOGICAL_NAME --shard-count $SHARD_COUNT || true
 
 NEW_CLUSTER=true
 echo -e "Creating EC cluster"
